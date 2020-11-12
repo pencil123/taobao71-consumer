@@ -67,26 +67,17 @@
     </dependencies>
 
     <build>
+        <finalName>${artifactId}</finalName>
         <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
             <resource>
                 <directory>src/main/resources/lib</directory>
                 <targetPath>BOOT-INF/lib/</targetPath>
                 <includes>
                     <include>*.jar</include>
                 </includes>
-            </resource>
-            <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
-                <targetPath>BOOT-INF/classes</targetPath>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.yml</include>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                </includes>
-                <filtering>false</filtering>
             </resource>
         </resources>
         <plugins>
@@ -105,6 +96,45 @@
                         <extdirs>${project.basedir}/src/main/resources/lib</extdirs>
                     </compilerArguments>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <imageName>${docker.repostory}/${docker.registry.name}/${project.artifactId}</imageName>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <dockerHost>${diy.dockerhost}</dockerHost>
+                    <imageTags>
+                        <imageTag>${project.version}</imageTag>
+                    </imageTags>
+                    <baseImage>java</baseImage>
+                    <entryPoint>["java", "-jar", "/${project.build.finalName}.${project.packaging}"]</entryPoint>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.${project.packaging}</include>
+                        </resource>
+                    </resources>
+                    <serverId>aliyun</serverId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>build-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>push-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
