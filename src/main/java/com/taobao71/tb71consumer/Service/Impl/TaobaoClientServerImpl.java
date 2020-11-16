@@ -158,6 +158,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
 
                 ItemSearch itemSearch = JSON.parseObject(itemJsonObject.toJSONString(), ItemSearch.class);
                 Integer itemId = itemSearchServer.addItemSearch(itemSearch);
+                return itemSearch.getSeller_id().toString();
             } else{
                 logger.error("getIteminfo response size {};info: {}",n_tbk_item.size(),n_tbk_item.toJSONString());
             }
@@ -166,7 +167,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
         }catch (NullPointerException e){
             e.printStackTrace();
         }
-        return "Success";
+        return "0";
     }
 
 /*    *//**
