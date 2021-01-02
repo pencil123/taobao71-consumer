@@ -29,6 +29,5 @@ public class DirectReceiver {
         System.out.println("DirectReceiver消费者收到消息  : " + itemMessage.toString());
         req.setNumIids(itemMessage.get("itemId").toString());
         taobaoClientServer.getItemInfo(req);
-
     }
 }
