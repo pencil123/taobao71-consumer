@@ -168,15 +168,13 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
         }catch (ApiException e) {
             e.printStackTrace();
             return  null;
-        }catch (NullPointerException e){
-            Item item = new Item();
-            item.setItem_id(Long.valueOf(tbkItemInfoGetRequest.getNumIids()));
-            itemServer.addItem(item);
+        }catch (NullPointerException e) {
             e.printStackTrace();
-            return  null;
-        }finally {
             return null;
         }
+//        }finally {
+//            return null;
+//        }
     }
 
     /**
