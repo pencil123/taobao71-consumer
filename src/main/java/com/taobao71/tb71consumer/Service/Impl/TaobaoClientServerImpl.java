@@ -38,6 +38,10 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
     private CouponServer couponServer;
     @Autowired
     private ItemSearchServer itemSearchServer;
+    @Autowired
+    private ItemWithoutCoupon itemWithoutCoupon;
+    @Autowired
+    private ItemWithoutCoupnServer itemWithoutCoupnServer;
 
     private TaobaoClient taobaoClient;
     private int total_count = 0;
@@ -169,6 +173,8 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
             e.printStackTrace();
             return  null;
         }catch (NullPointerException e) {
+            itemWithoutCoupon.setItem_id(Long.valueOf(tbkItemInfoGetRequest.getNumIids()));
+            itemWithoutCoupnServer.addItemWithoutCoupon(itemWithoutCoupon);
             e.printStackTrace();
             return null;
         }
