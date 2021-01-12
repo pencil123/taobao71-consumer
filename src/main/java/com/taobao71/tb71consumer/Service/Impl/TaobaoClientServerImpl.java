@@ -122,7 +122,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
         // 调用接口请求参数设置
         tbkDgMaterialOptionalRequest.setAdzoneId(adzoneid);
         tbkDgMaterialOptionalRequest.setSort("total_sales");
-        tbkDgMaterialOptionalRequest.setHasCoupon(true);
+        //tbkDgMaterialOptionalRequest.setHasCoupon(true);
         tbkDgMaterialOptionalRequest.setPageSize(100L);
         int pageNo =1;
         int total_count = 0;
@@ -188,7 +188,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
             TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
             req.setQ(itemSearch.getTitle());
             req.setSellerIds(itemSearch.getSeller_id().toString());
-            req.setCat(itemSearch.getCategory_name() + "," + itemSearch.getLevel_one_category_name());
+            //req.setCat(itemSearch.getCategory_name() + "," + itemSearch.getLevel_one_category_name());
             //req.setItemloc(itemSearch.getProvcity());
             req.setStartPrice(Double.valueOf(itemSearch.getZk_final_price()).longValue());
             req.setEndPrice(Double.valueOf(itemSearch.getZk_final_price()).longValue() + 1);
