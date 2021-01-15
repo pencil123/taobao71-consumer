@@ -41,8 +41,8 @@ public class DirectReceiver {
                 dealSearchItemById(itemMessage.get("itemId").toString());
                 break;
             case "searchCouponByKeyword" :
-
-
+                dealSearchCouponByKeyword(itemMessage.get("keyword").toString(),itemMessage.get("searchId").toString());
+                break;
         }
     }
 

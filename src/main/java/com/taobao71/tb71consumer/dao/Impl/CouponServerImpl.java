@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.Objects;
 
 @Service
@@ -66,7 +67,11 @@ public class CouponServerImpl implements CouponServer {
                 ps.setString(15, coupon.getTitle());
                 ps.setString(16, coupon.getPict_url());
                 ps.setString(17, coupon.getZk_final_price());
-                ps.setLong(18, coupon.getSearch_id());
+                if(coupon.getSearch_id() == null){
+                    ps.setNull(18, Types.BIGINT);
+                }else{
+                    ps.setLong(18,coupon.getSearch_id());
+                }
                 return ps;
             }, holder);
             id = Objects.requireNonNull(holder.getKey()).intValue();

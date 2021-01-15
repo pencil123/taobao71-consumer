@@ -79,6 +79,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
                 if(!searchId.isEmpty()){
                     coupon.setSearch_id(Long.valueOf(searchId));
                 }
+                logger.info("coupon info:{}",coupon.toString());
                 couponServer.addCoupon(coupon);
             }else {
                 logger.info("没有优惠券");
