@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface TaobaoClientServer {
 
-    public Integer searchMaterial(TbkDgMaterialOptionalRequest tbkDgMaterialOptionalRequest);
+    public Integer searchMaterial(TbkDgMaterialOptionalRequest tbkDgMaterialOptionalRequest,String searchId);
 
     public ItemSearch getItemInfo(TbkItemInfoGetRequest tbkItemInfoGetRequest);
 

@@ -58,7 +58,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
      * 解析接口返回的数据，并解析，并写入到数据库
      * @param infos
      */
-    private void parseMaterialInfo(JSONArray infos) {
+    private void parseMaterialInfo(JSONArray infos,String searchId) {
         //查询接口处理
         for(int i=0;i< infos.size();i++) {
             JSONObject info = infos.getJSONObject(i);
@@ -76,6 +76,9 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
             //优惠券处理
             Coupon coupon = JSON.parseObject(info.toJSONString(),Coupon.class);
             if (!coupon.getCoupon_id().equals("")) {
+                if(!searchId.isEmpty()){
+                    coupon.setSearch_id(Long.valueOf(searchId));
+                }
                 couponServer.addCoupon(coupon);
             }else {
                 logger.info("没有优惠券");
@@ -87,7 +90,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
      * 实际执行接口调用的函数，并将执行结果写入到数据库
      * @param tbkDgMaterialOptionalRequest
      */
-    private Integer searchMaterialAction(TbkDgMaterialOptionalRequest tbkDgMaterialOptionalRequest){
+    private Integer searchMaterialAction(TbkDgMaterialOptionalRequest tbkDgMaterialOptionalRequest,String searchId){
         JSONObject result_list;
         JSONArray map_data;
         JSONObject tbk_dg_material_optional_response;
@@ -114,7 +117,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
             logger.info("返回为空；变量i:{}");
             return 0;
         }
-        parseMaterialInfo(map_data);
+        parseMaterialInfo(map_data,searchId);
         return map_data.size();
     }
     /**
@@ -122,7 +125,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
      * @param tbkDgMaterialOptionalRequest 请求对象
      * @return 调用接口获取的物料数量
      */
-    public Integer searchMaterial(TbkDgMaterialOptionalRequest tbkDgMaterialOptionalRequest){
+    public Integer searchMaterial(TbkDgMaterialOptionalRequest tbkDgMaterialOptionalRequest,String searchId){
         // 调用接口请求参数设置
         tbkDgMaterialOptionalRequest.setAdzoneId(adzoneid);
         tbkDgMaterialOptionalRequest.setSort("total_sales");
@@ -133,7 +136,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
         do {
             tbkDgMaterialOptionalRequest.setPageNo(Long.valueOf(pageNo));
             pageNo ++;
-            total_count += searchMaterialAction(tbkDgMaterialOptionalRequest);
+            total_count += searchMaterialAction(tbkDgMaterialOptionalRequest,searchId);
             logger.info("调用接口返回的数据量：{}",total_count);
             try {
                 Thread.sleep(2000);    //延时2秒
@@ -198,7 +201,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
             //req.setItemloc(itemSearch.getProvcity());
             req.setStartPrice(Double.valueOf(itemSearch.getZk_final_price()).longValue());
             req.setEndPrice(Double.valueOf(itemSearch.getZk_final_price()).longValue() + 1);
-            logger.info("根据商品找优惠券;遍历了{}商品",searchMaterial(req));
+            logger.info("根据商品找优惠券;遍历了{}商品",searchMaterial(req,""));
         }
         String couoponUrl2 = couponServer.getCouponUrlByItemId(itemSearch.getItem_id().toString());
         if (couoponUrl2 != null) {
