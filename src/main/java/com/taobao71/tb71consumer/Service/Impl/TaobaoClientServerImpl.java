@@ -107,6 +107,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
         // 调用接口返回值的数量
         if(this.total_count ==0){
             this.total_count = tbk_dg_material_optional_response.getIntValue("total_results");
+            this.total_count = this.total_count > 100 ? 100: this.total_count;
             logger.info("同样的查询首次调用返回的匹配总量：{}",this.total_count);
         }
         // 处理返回的值为空的情况
@@ -130,6 +131,8 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
         // 调用接口请求参数设置
         tbkDgMaterialOptionalRequest.setAdzoneId(adzoneid);
         tbkDgMaterialOptionalRequest.setSort("total_sales");
+        tbkDgMaterialOptionalRequest.setNeedFreeShipment(true);
+        tbkDgMaterialOptionalRequest.setNeedPrepay(true);
         //tbkDgMaterialOptionalRequest.setHasCoupon(true);
         tbkDgMaterialOptionalRequest.setPageSize(100L);
         int pageNo =1;
@@ -162,11 +165,23 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
             JSONArray n_tbk_item = results.getJSONArray("n_tbk_item");
             if (n_tbk_item.size() == 1) {
                 JSONObject itemJsonObject = n_tbk_item.getJSONObject(0);
-//                itemJsonObject.put("category_name",itemJsonObject.getString("cat_leaf_name"));
-//                itemJsonObject.put("level_one_category_name",itemJsonObject.getString("cat_name"));
-//                itemJsonObject.put("item_id",itemJsonObject.getLongValue("num_iid"));
-
                 Item item = JSON.parseObject(itemJsonObject.toJSONString(), Item.class);
+                item.setShop_id(1111);
+                item.setX_id("none");
+                item.setItem_id(Long.valueOf("1111"));
+                item.setItem_description("none");
+                item.setCategory_id(111);
+                item.setCategory_name("none");
+                item.setCommission_rate("1111");
+                item.setTmall_play_activity_info("1111");
+                item.setInclude_dxjh("1111");
+                item.setInclude_mkt("1111");
+                item.setLevel_one_category_id(1111);
+                item.setLevel_one_category_name("1111");
+                item.setReal_post_fee("1111");
+                item.setUrl("1111");
+                item.setWhite_image("1111");
+                item.setInfo_dxjh("11111");
                 Integer itemId = itemServer.addItem(item);
                 return item;
             } else{

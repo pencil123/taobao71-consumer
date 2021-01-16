@@ -26,8 +26,8 @@ public class CouponServerImpl implements CouponServer {
 
     private Integer couponExistRetrunId(Coupon coupon) {
         try {
-            String sqlString = "select id from coupon where coupon_id = ?";
-            Integer id = jdbcTemplate.queryForObject(sqlString, Integer.class, coupon.getCoupon_id());
+            String sqlString = "select id from coupon where item_id = ?";
+            Integer id = jdbcTemplate.queryForObject(sqlString, Integer.class, coupon.getItem_id());
             return id;
         }catch (Exception e){
             return 0;
@@ -76,9 +76,9 @@ public class CouponServerImpl implements CouponServer {
             }, holder);
             id = Objects.requireNonNull(holder.getKey()).intValue();
         } catch (InvalidResultSetAccessException e) {
-            logger.warn("Dao#数据写入失败:InvalidResultSetAccessException: {}",e.toString());
+            logger.info("Dao#数据写入失败:InvalidResultSetAccessException: {}",e.toString());
         } catch (DataAccessException e) {
-            logger.warn("Dao#数据写入失败:DataAccessException; {}",e.toString());
+            logger.info("Dao#数据写入失败:DataAccessException; {}",e.toString());
         }
         return Integer.valueOf(id);
     }
