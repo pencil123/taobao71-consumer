@@ -6,6 +6,7 @@ import com.taobao.api.request.TbkDgMaterialOptionalRequest;
 import com.taobao.api.request.TbkItemInfoGetRequest;
 import com.taobao71.tb71consumer.Service.Impl.TaobaoClientServerImpl;
 import com.taobao71.tb71consumer.Service.TaobaoClientServer;
+import com.taobao71.tb71consumer.domain.Item;
 import com.taobao71.tb71consumer.domain.ItemSearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,9 +49,9 @@ public class DirectReceiver {
 
     private void dealSearchItemById(String itemId){
         tbkItemInfoGetRequest.setNumIids(itemId);
-        ItemSearch itemSearch = taobaoClientServer.getItemInfo(tbkItemInfoGetRequest);
-        if( itemSearch != null){
-            taobaoClientServer.gainItemsByItem(itemSearch);
+        Item item = taobaoClientServer.getItemInfo(tbkItemInfoGetRequest);
+        if( item != null){
+            taobaoClientServer.gainItemsByItem(item);
         }else {
             logger.info("没有找到客户提交ID的商品信息。");
         }

@@ -153,7 +153,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
      * @param tbkItemInfoGetRequest
      * @return 获取商品失败返回null
      */
-    public ItemSearch getItemInfo(TbkItemInfoGetRequest tbkItemInfoGetRequest){
+    public Item getItemInfo(TbkItemInfoGetRequest tbkItemInfoGetRequest){
         try {
             TbkItemInfoGetResponse rsp = taobaoClient.execute(tbkItemInfoGetRequest);
             JSONObject jsonObject = JSONObject.parseObject(rsp.getBody());
@@ -162,13 +162,13 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
             JSONArray n_tbk_item = results.getJSONArray("n_tbk_item");
             if (n_tbk_item.size() == 1) {
                 JSONObject itemJsonObject = n_tbk_item.getJSONObject(0);
-                itemJsonObject.put("category_name",itemJsonObject.getString("cat_leaf_name"));
-                itemJsonObject.put("level_one_category_name",itemJsonObject.getString("cat_name"));
-                itemJsonObject.put("item_id",itemJsonObject.getLongValue("num_iid"));
+//                itemJsonObject.put("category_name",itemJsonObject.getString("cat_leaf_name"));
+//                itemJsonObject.put("level_one_category_name",itemJsonObject.getString("cat_name"));
+//                itemJsonObject.put("item_id",itemJsonObject.getLongValue("num_iid"));
 
-                ItemSearch itemSearch = JSON.parseObject(itemJsonObject.toJSONString(), ItemSearch.class);
-                Integer itemId = itemSearchServer.addItemSearch(itemSearch);
-                return itemSearch;
+                Item item = JSON.parseObject(itemJsonObject.toJSONString(), Item.class);
+                Integer itemId = itemServer.addItem(item);
+                return item;
             } else{
                 logger.error("getIteminfo response size {};info: {}",n_tbk_item.size(),n_tbk_item.toJSONString());
                 return  null;
@@ -182,29 +182,26 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
             e.printStackTrace();
             return null;
         }
-//        }finally {
-//            return null;
-//        }
     }
 
     /**
      * 根据商品信息，搜索商品的Coupon
-     * @param itemSearch
+     * @param item
      * @return true找到了，false 没找到
      */
-    public Boolean gainItemsByItem(ItemSearch itemSearch){
+    public Boolean gainItemsByItem(Item item){
 //        // 根据商品信息，搜索优惠券信息
-        if (itemSearch != null) {
+        if (item != null) {
             TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
-            req.setQ(itemSearch.getTitle());
-            req.setSellerIds(itemSearch.getSeller_id().toString());
+            req.setQ(item.getTitle());
+            req.setSellerIds(item.getSeller_id().toString());
             //req.setCat(itemSearch.getCategory_name() + "," + itemSearch.getLevel_one_category_name());
             //req.setItemloc(itemSearch.getProvcity());
-            req.setStartPrice(Double.valueOf(itemSearch.getZk_final_price()).longValue());
-            req.setEndPrice(Double.valueOf(itemSearch.getZk_final_price()).longValue() + 1);
+            req.setStartPrice(Double.valueOf(item.getZk_final_price()).longValue());
+            req.setEndPrice(Double.valueOf(item.getZk_final_price()).longValue() + 1);
             logger.info("根据商品找优惠券;遍历了{}商品",searchMaterial(req,""));
         }
-        String couoponUrl2 = couponServer.getCouponUrlByItemId(itemSearch.getItem_id().toString());
+        String couoponUrl2 = couponServer.getCouponUrlByItemId(item.getItem_id().toString());
         if (couoponUrl2 != null) {
             return true;
         }
