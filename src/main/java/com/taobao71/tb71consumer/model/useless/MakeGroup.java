@@ -1,4 +1,4 @@
-package com.taobao71.tb71consumer.domain;
+package com.taobao71.tb71consumer.model.useless;
 
 /**
  * orig_price	String	25	拼团专用-拼团一人价（原价)，单位元

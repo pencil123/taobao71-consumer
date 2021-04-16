@@ -1,4 +1,4 @@
-package com.taobao71.tb71consumer.domain;
+package com.taobao71.tb71consumer.model.useless;
 
 /**
  * presale_discount_fee_text	String	付定金立减5元	预售商品-优惠

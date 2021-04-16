@@ -2,8 +2,7 @@ package com.taobao71.tb71consumer.Service;
 
 import com.taobao.api.request.TbkDgMaterialOptionalRequest;
 import com.taobao.api.request.TbkItemInfoGetRequest;
-import com.taobao71.tb71consumer.domain.Item;
-import com.taobao71.tb71consumer.domain.ItemSearch;
+import com.taobao71.tb71consumer.model.domain.Item;
 import org.springframework.stereotype.Service;
 
 @Service

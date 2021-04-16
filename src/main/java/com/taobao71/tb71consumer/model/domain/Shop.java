@@ -1,8 +1,7 @@
-package com.taobao71.tb71consumer.domain;
-
-import org.springframework.stereotype.Component;
+package com.taobao71.tb71consumer.model.domain;
 
 import java.io.Serializable;
+import org.springframework.stereotype.Component;
 
 /**
  * seller_id	Number	232332	店铺信息-卖家id

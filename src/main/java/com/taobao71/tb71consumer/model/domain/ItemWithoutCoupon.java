@@ -1,9 +1,6 @@
-package com.taobao71.tb71consumer.domain;
+package com.taobao71.tb71consumer.model.domain;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 @Component
 public class ItemWithoutCoupon {

@@ -1,9 +1,8 @@
-package com.taobao71.tb71consumer.domain;
+package com.taobao71.tb71consumer.model.domain;
 
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
+import org.springframework.stereotype.Component;
 
 /**
  * @author lyzhang
