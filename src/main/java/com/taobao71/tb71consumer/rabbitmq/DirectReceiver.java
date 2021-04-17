@@ -1,10 +1,7 @@
 package com.taobao71.tb71consumer.rabbitmq;
 
-import com.taobao.api.DefaultTaobaoClient;
-import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.TbkDgMaterialOptionalRequest;
 import com.taobao.api.request.TbkItemInfoGetRequest;
-import com.taobao71.tb71consumer.Service.Impl.TaobaoClientServerImpl;
 import com.taobao71.tb71consumer.Service.TaobaoClientServer;
 import com.taobao71.tb71consumer.model.domain.Item;
 import org.slf4j.Logger;

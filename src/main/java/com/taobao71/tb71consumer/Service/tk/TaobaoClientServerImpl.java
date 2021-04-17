@@ -1,4 +1,4 @@
-package com.taobao71.tb71consumer.Service.Impl;
+package com.taobao71.tb71consumer.Service.tk;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -10,9 +10,11 @@ import com.taobao.api.request.TbkDgMaterialOptionalRequest;
 import com.taobao.api.request.TbkItemInfoGetRequest;
 import com.taobao.api.response.TbkDgMaterialOptionalResponse;
 import com.taobao.api.response.TbkItemInfoGetResponse;
-import com.taobao71.tb71consumer.Service.TaobaoClientServer;
-import com.taobao71.tb71consumer.dao.*;
-import com.taobao71.tb71consumer.domain.*;
+import com.taobao71.tb71consumer.Service.*;
+import com.taobao71.tb71consumer.model.domain.Coupon;
+import com.taobao71.tb71consumer.model.domain.Item;
+import com.taobao71.tb71consumer.model.domain.ItemWithoutCoupon;
+import com.taobao71.tb71consumer.model.domain.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +43,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
     @Autowired
     private ItemWithoutCoupon itemWithoutCoupon;
     @Autowired
-    private ItemWithoutCoupnServer itemWithoutCoupnServer;
+    private ItemWithoutCouponServer itemWithoutCouponServer;
 
     private TaobaoClient taobaoClient;
     private int total_count = 0;
@@ -66,21 +68,15 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
 
             //商店信息处理
             Shop shop = JSON.parseObject(info.toJSONString(),Shop.class);
-            Integer shopId = shopServer.addShop(shop);
-
+            Integer shopId = shopServer.save(shop) ? shop.getId(): 1;
             //商品信息处理
             Item item = JSON.parseObject(info.toJSONString(), Item.class);
-            item.setShop_id(shopId);
-            Integer itemId = itemServer.addItem(item);
-
+            item.setShopId(shopId);
+            Integer itemId = itemServer.save(item)? item.getId() : 1;
             //优惠券处理
             Coupon coupon = JSON.parseObject(info.toJSONString(),Coupon.class);
-            if (!coupon.getCoupon_id().equals("")) {
-                if(!searchId.isEmpty()){
-                    coupon.setSearch_id(Long.valueOf(searchId));
-                }
-                logger.info("coupon info:{}",coupon.toString());
-                couponServer.addCoupon(coupon);
+            if (!coupon.getCouponId().equals("")) {
+                couponServer.save(coupon);
             }else {
                 logger.info("没有优惠券");
             }
@@ -165,24 +161,12 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
             JSONArray n_tbk_item = results.getJSONArray("n_tbk_item");
             if (n_tbk_item.size() == 1) {
                 JSONObject itemJsonObject = n_tbk_item.getJSONObject(0);
+//                itemJsonObject.put("category_name",itemJsonObject.getString("cat_leaf_name"));
+//                itemJsonObject.put("level_one_category_name",itemJsonObject.getString("cat_name"));
+//                itemJsonObject.put("item_id",itemJsonObject.getLongValue("num_iid"));
+
                 Item item = JSON.parseObject(itemJsonObject.toJSONString(), Item.class);
-                item.setShop_id(1111);
-                item.setX_id("none");
-                item.setItem_id(Long.valueOf("1111"));
-                item.setItem_description("none");
-                item.setCategory_id(111);
-                item.setCategory_name("none");
-                item.setCommission_rate("1111");
-                item.setTmall_play_activity_info("1111");
-                item.setInclude_dxjh("1111");
-                item.setInclude_mkt("1111");
-                item.setLevel_one_category_id(1111);
-                item.setLevel_one_category_name("1111");
-                item.setReal_post_fee("1111");
-                item.setUrl("1111");
-                item.setWhite_image("1111");
-                item.setInfo_dxjh("11111");
-                Integer itemId = itemServer.addItem(item);
+                Integer itemId = itemServer.save(item)? item.getId() : 1;
                 return item;
             } else{
                 logger.error("getIteminfo response size {};info: {}",n_tbk_item.size(),n_tbk_item.toJSONString());
@@ -192,8 +176,8 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
             e.printStackTrace();
             return  null;
         }catch (NullPointerException e) {
-            itemWithoutCoupon.setItem_id(Long.valueOf(tbkItemInfoGetRequest.getNumIids()));
-            itemWithoutCoupnServer.addItemWithoutCoupon(itemWithoutCoupon);
+            itemWithoutCoupon.setItemId(Long.valueOf(tbkItemInfoGetRequest.getNumIids()));
+            itemWithoutCouponServer.save(itemWithoutCoupon);
             e.printStackTrace();
             return null;
         }
@@ -209,31 +193,17 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
         if (item != null) {
             TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
             req.setQ(item.getTitle());
-            req.setSellerIds(item.getSeller_id().toString());
+            req.setSellerIds(item.getSellerId().toString());
             //req.setCat(itemSearch.getCategory_name() + "," + itemSearch.getLevel_one_category_name());
             //req.setItemloc(itemSearch.getProvcity());
-            req.setStartPrice(Double.valueOf(item.getZk_final_price()).longValue());
-            req.setEndPrice(Double.valueOf(item.getZk_final_price()).longValue() + 1);
+            req.setStartPrice(Double.valueOf(item.getZkFinalPrice()).longValue());
+            req.setEndPrice(Double.valueOf(item.getZkFinalPrice()).longValue() + 1);
             logger.info("根据商品找优惠券;遍历了{}商品",searchMaterial(req,""));
         }
-        String couoponUrl2 = couponServer.getCouponUrlByItemId(item.getItem_id().toString());
+        String couoponUrl2 = couponServer.getCouponByItemId(item.getItemId().toString()).getCouponShareUrl();
         if (couoponUrl2 != null) {
             return true;
         }
         return false;
     }
-
-    /*    *//**
-     * 根据ItemId 查询商品的优惠券
-     * @return
-     *//*
-    public String searchCouponByItemID(){
-        taobaoClient = new DefaultTaobaoClient(url, appkey, secret);
-        TbkItemidCouponGetRequest req = new TbkItemidCouponGetRequest();
-        req.setPlatform(1L);
-        req.setPid("mm_123_123_123");
-        req.setNumIids("123,456");
-        TbkItemidCouponGetResponse rsp = client.execute(req);
-        System.out.println(rsp.getBody());
-    }*/
 }
