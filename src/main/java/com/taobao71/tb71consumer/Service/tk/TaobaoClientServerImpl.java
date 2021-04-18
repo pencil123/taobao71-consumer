@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -68,7 +69,14 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
 
             //商店信息处理
             Shop shop = JSON.parseObject(info.toJSONString(),Shop.class);
-            Integer shopId = shopServer.save(shop) ? shop.getId(): 1;
+            Integer shopId;
+            try{
+            shopId = shopServer.save(shop) ? shop.getId(): 1;
+            }catch (DuplicateKeyException exception){
+                shopId = shop.getId();
+                logger.info("shop 插入失败，shopId:{}",shopId);
+                logger.warn("主键插入冲突：{}",exception.toString());
+            }
             //商品信息处理
             Item item = JSON.parseObject(info.toJSONString(), Item.class);
             item.setShopId(shopId);
