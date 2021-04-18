@@ -84,6 +84,7 @@ public class TaobaoClientServerImpl implements TaobaoClientServer {
             //优惠券处理
             Coupon coupon = JSON.parseObject(info.toJSONString(),Coupon.class);
             if (!coupon.getCouponId().equals("")) {
+                coupon.setSearchId(Long.valueOf(searchId));
                 couponServer.save(coupon);
             }else {
                 logger.info("没有优惠券");
