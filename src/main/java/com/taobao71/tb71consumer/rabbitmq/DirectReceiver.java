@@ -35,21 +35,28 @@ public class DirectReceiver {
         msgType = itemMessage.get("type").toString();
         switch(msgType){
             case "searchItemById" :
-                dealSearchItemById(itemMessage.get("itemId").toString());
+                dealSearchItemById(itemMessage);
                 break;
             case "searchCouponByKeyword" :
                 dealSearchCouponByKeyword(itemMessage.get("keyword").toString(),itemMessage.get("searchId").toString());
                 break;
+            default:
+                logger.warn("没有匹配到处理方法:{}",itemMessage.toString());
+                break;
         }
     }
 
-    private void dealSearchItemById(String itemId){
-        tbkItemInfoGetRequest.setNumIids(itemId);
-        Item item = taobaoClientServer.getItemInfo(tbkItemInfoGetRequest);
-        if( item != null){
-            taobaoClientServer.gainItemsByItem(item);
-        }else {
-            logger.info("没有找到客户提交ID的商品信息。");
+    private void dealSearchItemById(Map itemMessage){
+        try{
+            tbkItemInfoGetRequest.setNumIids(itemMessage.get("itemId").toString());
+            Item item = taobaoClientServer.getItemInfo(tbkItemInfoGetRequest);
+            if( item != null){
+                taobaoClientServer.gainItemsByItem(item);
+            }else {
+                logger.info("没有找到客户提交ID的商品信息。");
+            }
+        }catch (NullPointerException e){
+            logger.warn("通过ID搜索商品失败:{}",itemMessage.toString());
         }
     }
 
